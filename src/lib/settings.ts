@@ -1,6 +1,8 @@
 import type { StoreSettings } from "@prisma/client";
 import { cache } from "react";
 import { prisma, safe } from "./db";
+import { DEMO_HERO } from "./demo-data";
+import { demoMode } from "./demo-store";
 
 export type TrustItem = { title: string; text: string };
 
@@ -32,6 +34,8 @@ const DEFAULTS: StoreSettings = {
 };
 
 export const getSettings = cache(async (): Promise<StoreSettings> => {
+  // Sem banco ligado: definições base + imagem do hero de demonstração.
+  if (demoMode()) return { ...DEFAULTS, heroImageUrl: DEMO_HERO };
   const row = await safe(() => prisma.storeSettings.findUnique({ where: { id: "store" } }), null);
   return row ?? DEFAULTS;
 });

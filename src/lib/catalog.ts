@@ -2,6 +2,7 @@ import type { Category, Prisma } from "@prisma/client";
 import { cache } from "react";
 import { compareSizes } from "./catalog-shared";
 import { prisma, safe } from "./db";
+import { demoCategories, demoMode, demoProducts, type DemoProduct } from "./demo-store";
 
 // ─── Cartões de produto ──────────────────────────────────────
 
@@ -80,7 +81,7 @@ const ACTIVE = { status: "ACTIVE" } satisfies Prisma.ProductWhereInput;
 // ─── Categorias ──────────────────────────────────────────────
 
 export const getAllCategories = cache(async (): Promise<Category[]> =>
-  safe(
+  demoMode() ? demoCategories() : safe(
     () =>
       prisma.category.findMany({
         where: { isActive: true },
@@ -124,6 +125,14 @@ export async function getCategoryBySlug(slug: string) {
 async function productsInCategory(slug: string, take: number) {
   const category = await getCategoryBySlug(slug);
   if (!category) return [];
+  if (demoMode()) {
+    const ids = await descendantIds(category.id);
+    return demoProducts()
+      .filter((p) => p.categoryId && ids.includes(p.categoryId))
+      .sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || +b.createdAt - +a.createdAt)
+      .slice(0, take)
+      .map(toCard);
+  }
   return cards({
     where: { ...ACTIVE, categoryId: { in: await descendantIds(category.id) } },
     orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
@@ -132,6 +141,25 @@ async function productsInCategory(slug: string, take: number) {
 }
 
 export async function getHomeData() {
+  if (demoMode()) {
+    const all = demoProducts();
+    const byDate = [...all].sort((a, b) => +b.createdAt - +a.createdAt);
+    const [football, streetwear, sneakers] = await Promise.all([
+      productsInCategory("futebol", 8),
+      productsInCategory("roupas", 8),
+      productsInCategory("sneakers", 8),
+    ]);
+    return {
+      newDrops: byDate.filter((p) => p.isNew).slice(0, 8).map(toCard),
+      bestSellers: all.filter((p) => p.isBestSeller).slice(0, 8).map(toCard),
+      lastUnits: all.map(toCard).filter((c) => c.lowStock).slice(0, 8),
+      featured: (all.find((p) => p.isFeatured) ? toCard(all.find((p) => p.isFeatured)!) : null) as ProductCardData | null,
+      football,
+      streetwear,
+      sneakers,
+      total: all.length,
+    };
+  }
   return safe(
     async () => {
       const [newDrops, bestSellers, lowStockCandidates, featured, football, streetwear, sneakers, total] =
@@ -222,7 +250,53 @@ export function normalizeParams(raw: Record<string, string | string[] | undefine
   return out;
 }
 
+async function demoSearch(params: CatalogParams) {
+  let list: DemoProduct[] = demoProducts();
+  if (params.q) {
+    const q = params.q.toLowerCase();
+    list = list.filter((p) => p.name.toLowerCase().includes(q) || p.category?.name.toLowerCase().includes(q));
+  }
+  if (params.categoria) {
+    const category = await getCategoryBySlug(params.categoria);
+    const ids = category ? await descendantIds(category.id) : [];
+    list = list.filter((p) => p.categoryId && ids.includes(p.categoryId));
+  }
+  if (params.marca) list = [];
+  if (params.tamanho) list = list.filter((p) => p.variants.some((v) => v.size === params.tamanho && v.stock > 0));
+  if (params.disponivel) list = list.filter((p) => p.variants.some((v) => v.stock > 0));
+  const min = Number(params.min);
+  const max = Number(params.max);
+  if (params.min && Number.isFinite(min)) list = list.filter((p) => p.effectivePriceCents >= min * 100);
+  if (params.max && Number.isFinite(max)) list = list.filter((p) => p.effectivePriceCents <= max * 100);
+  if (params.novidade) list = list.filter((p) => p.isNew);
+  if (params.promo) list = list.filter((p) => p.salePriceCents != null);
+  if (params.exclusivo) list = list.filter((p) => p.isLimited);
+
+  const sorted = [...list].sort((a, b) => {
+    switch (params.ordem) {
+      case "recentes":
+        return +b.createdAt - +a.createdAt;
+      case "vendidos":
+        return Number(b.isBestSeller) - Number(a.isBestSeller);
+      case "preco-asc":
+        return a.effectivePriceCents - b.effectivePriceCents;
+      case "preco-desc":
+        return b.effectivePriceCents - a.effectivePriceCents;
+      default:
+        return Number(b.isFeatured) - Number(a.isFeatured) || Number(b.isNew) - Number(a.isNew) || +b.createdAt - +a.createdAt;
+    }
+  });
+  const page = Math.max(1, Number(params.pagina) || 1);
+  return {
+    items: sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(toCard),
+    total: sorted.length,
+    page,
+    pages: Math.max(1, Math.ceil(sorted.length / PAGE_SIZE)),
+  };
+}
+
 export async function searchProducts(params: CatalogParams) {
+  if (demoMode()) return demoSearch(params);
   const where: Prisma.ProductWhereInput[] = [ACTIVE];
 
   if (params.q) {
@@ -292,6 +366,10 @@ export async function searchProducts(params: CatalogParams) {
 }
 
 export async function getFilterOptions() {
+  if (demoMode()) {
+    const sizes = [...new Set(demoProducts().flatMap((p) => p.variants.map((v) => v.size!)))].sort(compareSizes);
+    return { brands: [] as { name: string; slug: string }[], sizes, colors: [] as string[] };
+  }
   return safe(
     async () => {
       const [brands, variants] = await Promise.all([
@@ -317,6 +395,7 @@ export async function getFilterOptions() {
 // ─── Página de produto ───────────────────────────────────────
 
 export async function getProductBySlug(slug: string) {
+  if (demoMode()) return demoProducts().find((p) => p.slug === slug) ?? null;
   return safe(
     () =>
       prisma.product.findFirst({
@@ -340,6 +419,12 @@ export async function getProductBySlug(slug: string) {
 
 export async function getRelatedProducts(productId: string, categoryId: string | null) {
   if (!categoryId) return [];
+  if (demoMode()) {
+    return demoProducts()
+      .filter((p) => p.categoryId === categoryId && p.id !== productId)
+      .slice(0, 4)
+      .map(toCard);
+  }
   return safe(
     () =>
       cards({
@@ -353,5 +438,6 @@ export async function getRelatedProducts(productId: string, categoryId: string |
 
 export async function getCardsByIds(ids: string[]) {
   if (ids.length === 0) return [];
+  if (demoMode()) return demoProducts().filter((p) => ids.includes(p.id)).map(toCard);
   return safe(() => cards({ where: { ...ACTIVE, id: { in: ids.slice(0, 100) } } }), []);
 }

@@ -13,6 +13,7 @@
 import { randomBytes } from "node:crypto";
 import type { OrderStatus, Prisma } from "@prisma/client";
 import { prisma } from "./db";
+import { demoMode, demoProducts } from "./demo-store";
 import { STOCK_COMMITTED_STATUSES, STOCK_RELEASED_STATUSES } from "./order-status";
 
 export class OrderError extends Error {}
@@ -37,6 +38,30 @@ export type PricedLine = {
 export async function priceCart(input: CartInput): Promise<PricedLine[]> {
   const ids = [...new Set(input.map((i) => i.variantId))].slice(0, 50);
   if (ids.length === 0) return [];
+
+  if (demoMode()) {
+    return input.flatMap((item) => {
+      const product = demoProducts().find((p) => p.variants.some((v) => v.id === item.variantId));
+      const v = product?.variants.find((x) => x.id === item.variantId);
+      if (!product || !v) return [];
+      return [
+        {
+          variantId: v.id,
+          productId: product.id,
+          slug: product.slug,
+          name: product.name,
+          size: v.size,
+          color: v.color,
+          sku: v.sku,
+          imageUrl: product.images[0]?.url ?? null,
+          unitPriceCents: product.effectivePriceCents,
+          quantity: Math.max(1, Math.min(99, Math.floor(item.quantity))),
+          stock: v.stock,
+          available: v.stock > 0,
+        },
+      ];
+    });
+  }
 
   const variants = await prisma.productVariant.findMany({
     where: { id: { in: ids } },
@@ -110,6 +135,9 @@ export async function createOrder(input: {
   shippingMethodId: string | null;
   note: string | null;
 }) {
+  if (demoMode()) {
+    throw new OrderError("A loja está em modo de demonstração: as encomendas pelo site ainda não estão ativas. Fala connosco pelo Instagram ou WhatsApp.");
+  }
   const lines = await priceCart(input.items);
   if (lines.length === 0) throw new OrderError("O carrinho está vazio.");
 
