@@ -30,8 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — o template versiona-se, os valores reais nunca
 .env*
+!.env.example
+
+# Base de dados local (embedded-postgres) e uploads de desenvolvimento
+.pgdata/
+public/uploads/
 
 # vercel
 .vercel

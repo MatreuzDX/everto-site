@@ -1,0 +1,499 @@
+// CAETANO IMPORTZ — loja online
+// Fonte de verdade do modelo de dados.
+//
+// Convenções:
+//   - Dinheiro: Int em cêntimos, sufixo `Cents` (nunca Float)
+//   - Nada de dados inventados: produtos, preços, contactos e textos legais
+//     entram pelo admin.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════ UTILIZADORES ═══════════════
+
+enum Role {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         Role      @default(CUSTOMER)
+  isActive     Boolean   @default(true)
+  failedLogins Int       @default(0)
+  lockedUntil  DateTime?
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions      Session[]
+  addresses     Address[]
+  orders        Order[]
+  wishlistItems WishlistItem[]
+  reviews       Review[]
+
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  label      String?
+  name       String
+  phone      String?
+  line1      String
+  line2      String?
+  postalCode String
+  city       String
+  country    String   @default("PT")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ═══════════════ CATÁLOGO ═══════════════
+
+model Category {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  description    String?
+  imageUrl       String?
+  parentId       String?
+  sortOrder      Int      @default(0)
+  isActive       Boolean  @default(true)
+  showOnHome     Boolean  @default(false)
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryTree")
+  products Product[]
+  coupons  Coupon[]
+
+  @@index([parentId])
+}
+
+model Brand {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  logoUrl   String?
+  createdAt DateTime  @default(now())
+  products  Product[]
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model Product {
+  id               String        @id @default(cuid())
+  name             String
+  slug             String        @unique
+  description      String?
+  status           ProductStatus @default(DRAFT)
+  brandId          String?
+  categoryId       String?
+  priceCents       Int
+  salePriceCents   Int?
+  /// Preço efetivo (promo ou normal) — mantido ao gravar, para ordenar e filtrar.
+  effectivePriceCents Int
+  sku              String?
+  videoUrl         String?
+  isNew            Boolean       @default(false)
+  isFeatured       Boolean       @default(false)
+  isBestSeller     Boolean       @default(false)
+  isLimited        Boolean       @default(false)
+  lowStockThreshold Int          @default(2)
+  /// Unidades vendidas (encomendas pagas). Alimenta "mais vendidos".
+  soldCount        Int           @default(0)
+
+  // Produtos importados — tudo opcional e só preenchido pelo admin.
+  origin           String?
+  model            String?
+  collection       String?
+  edition          String?
+  importNotes      String?
+  /// Texto de autenticidade. SÓ aparece na loja se `authenticityConfirmed`.
+  authenticityNote String?
+  authenticityConfirmed Boolean  @default(false)
+
+  seoTitle         String?
+  seoDescription   String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  brand         Brand?           @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  category      Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  images        ProductImage[]
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  drops         DropProduct[]
+  coupons       Coupon[]
+
+  @@index([status, createdAt])
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([effectivePriceCents])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, sortOrder])
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  size      String?
+  color     String?
+  sku       String? @unique
+  stock     Int     @default(0)
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  product     Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  movements   InventoryMovement[]
+  orderItems  OrderItem[]
+  stockAlerts StockAlert[]
+
+  @@index([productId])
+  @@index([size])
+}
+
+enum InventoryReason {
+  SALE
+  RESTOCK
+  ADJUSTMENT
+  ORDER_CANCELLED
+}
+
+model InventoryMovement {
+  id        String          @id @default(cuid())
+  variantId String
+  change    Int
+  reason    InventoryReason
+  orderId   String?
+  userId    String?
+  note      String?
+  createdAt DateTime        @default(now())
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId, createdAt])
+}
+
+// ═══════════════ ENCOMENDAS ═══════════════
+
+enum OrderStatus {
+  PENDING
+  PENDING_PAYMENT
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  seq          Int         @unique @default(autoincrement())
+  /// Token secreto para quem comprou sem conta poder ver a encomenda.
+  accessToken  String      @unique
+  userId       String?
+  status       OrderStatus @default(PENDING)
+  channel      String      @default("WEBSITE") // WEBSITE | WHATSAPP
+
+  email        String
+  name         String
+  phone        String
+  line1        String
+  line2        String?
+  postalCode   String
+  city         String
+  country      String
+
+  subtotalCents Int
+  shippingCents Int         @default(0)
+  discountCents Int         @default(0)
+  totalCents    Int
+  currency      String      @default("EUR")
+
+  paymentMethod    String
+  shippingMethodId String?
+  shippingLabel    String?
+  couponCode       String?
+  customerNote     String?
+  internalNote     String?
+  trackingCode     String?
+  /// Quando o stock foi descontado (ao confirmar pagamento). Null = ainda não.
+  stockCommittedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items   OrderItem[]
+  payments Payment[]
+  history OrderStatusHistory[]
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@index([email])
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  productId      String?
+  variantId      String?
+  name           String
+  size           String?
+  color          String?
+  sku            String?
+  imageUrl       String?
+  unitPriceCents Int
+  quantity       Int
+
+  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  review  Review?
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String
+  provider    String // manual | ifthenpay | stripe ...
+  method      String // MBWAY | MULTIBANCO | CARD | WHATSAPP ...
+  status      PaymentStatus @default(PENDING)
+  amountCents Int
+  externalId  String?
+  reference   String?
+  raw         Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([provider, externalId])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  note      String?
+  userId    String?
+  createdAt DateTime    @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+}
+
+// ═══════════════ MARKETING (Fase 2 — estrutura pronta) ═══════════════
+
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
+model Coupon {
+  id               String     @id @default(cuid())
+  code             String     @unique
+  type             CouponType
+  /// PERCENT: 1–100. FIXED: cêntimos.
+  value            Int
+  startsAt         DateTime?
+  endsAt           DateTime?
+  minSubtotalCents Int?
+  maxUses          Int?
+  usedCount        Int        @default(0)
+  productId        String?
+  categoryId       String?
+  isActive         Boolean    @default(true)
+  createdAt        DateTime   @default(now())
+
+  product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+}
+
+model Drop {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?
+  imageUrl    String?
+  startsAt    DateTime
+  endsAt      DateTime?
+  isPublished Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  products    DropProduct[]
+}
+
+model DropProduct {
+  dropId    String
+  productId String
+  sortOrder Int    @default(0)
+
+  drop    Drop    @relation(fields: [dropId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([dropId, productId])
+}
+
+model WishlistItem {
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Review {
+  id          String       @id @default(cuid())
+  productId   String
+  userId      String
+  /// Só quem comprou avalia: cada item de encomenda dá direito a uma avaliação.
+  orderItemId String       @unique
+  rating      Int
+  body        String?
+  status      ReviewStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@index([productId, status])
+}
+
+/// "Avisa-me quando voltar" — lista de espera por tamanho.
+model StockAlert {
+  id         String    @id @default(cuid())
+  variantId  String
+  email      String
+  createdAt  DateTime  @default(now())
+  notifiedAt DateTime?
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([variantId, email])
+}
+
+// ═══════════════ LOJA ═══════════════
+
+model ShippingMethod {
+  id            String   @id @default(cuid())
+  name          String
+  /// Códigos ISO de país, ex.: ["PT"], ["ES","FR"], ["BR"].
+  countries     String[]
+  priceCents    Int
+  freeOverCents Int?
+  estimate      String?
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+}
+
+/// Linha única (id = "store"). Tudo o que é específico da empresa vive aqui.
+model StoreSettings {
+  id              String   @id @default("store")
+  storeName       String   @default("CAETANO IMPORTZ")
+  tagline         String?
+  logoUrl         String?
+  announcement    String?
+  heroTitle       String?
+  heroSubtitle    String?
+  heroImageUrl    String?
+  email           String?
+  phone           String?
+  whatsappNumber  String?
+  instagramUrl    String?
+  tiktokUrl       String?
+  facebookUrl     String?
+  address         String?
+  legalName       String?
+  nif             String?
+  ralName         String?
+  ralUrl          String?
+  seoTitle        String?
+  seoDescription  String?
+  /// [{ "title": "...", "text": "..." }] — secção de confiança da homepage.
+  trustItems      Json     @default("[]")
+  /// Métodos que a loja quer mostrar no checkout. Os que precisam de gateway
+  /// só ficam ativos se as credenciais existirem nas variáveis de ambiente.
+  paymentMethods  String[] @default(["WHATSAPP"])
+  updatedAt       DateTime @updatedAt
+}
+
+model LegalPage {
+  slug      String   @id
+  title     String
+  content   String   @default("")
+  updatedAt DateTime @updatedAt
+}

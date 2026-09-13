@@ -1,0 +1,8 @@
+# Segredos locais nunca sobem.
+.env
+.env.*
+!.env.example
+.pgdata/
+scripts/
+public/uploads/
+# ATENÇÃO: prisma/ TEM de subir — o build corre prisma/preparar-banco.mjs.
