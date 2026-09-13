@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
     // public/uploads (desenvolvimento). Nenhum outro domínio é otimizado.
     remotePatterns: [
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      // Só para os produtos de demonstração (npm run demo:seed). Sair quando
+      // o catálogo real entrar.
+      { protocol: "https", hostname: "images.unsplash.com", pathname: "/photo-*" },
     ],
   },
 };

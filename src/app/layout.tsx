@@ -51,7 +51,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-PT" className={`${anton.variable} ${inter.variable} ${jetbrains.variable} antialiased`}>
+    <html lang="pt-PT" data-scroll-behavior="smooth" className={`${anton.variable} ${inter.variable} ${jetbrains.variable} antialiased`}>
       <body className="min-h-dvh">
         <StoreProvider>{children}</StoreProvider>
         <Analytics />
