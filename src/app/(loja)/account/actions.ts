@@ -30,7 +30,8 @@ export async function changePassword(_prev: FormState, formData: FormData): Prom
     return { ok: false, message: `A nova palavra-passe precisa de ${MIN_PASSWORD_LENGTH} caracteres.` };
   }
   const row = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
-  if (!(await verifyPassword(row.passwordHash, current))) {
+  // Contas criadas com Google podem definir a primeira palavra-passe sem a "atual".
+  if (row.passwordHash && !(await verifyPassword(row.passwordHash, current))) {
     return { ok: false, message: "A palavra-passe atual não está certa." };
   }
   await prisma.$transaction([

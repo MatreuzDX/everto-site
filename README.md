@@ -69,6 +69,21 @@ Nunca pôr valores fictícios: vazio = funcionalidade desligada.
 Vercel → projeto → *Settings → Domains* → adicionar o domínio e criar os registos DNS indicados
 (A/CNAME no registador). Atualizar `NEXT_PUBLIC_SITE_URL` para o domínio final e fazer redeploy.
 
+## 4b. Login com Google
+
+Os clientes podem criar conta e entrar com um clique ("Continuar com Google"). Se já existir conta com o
+mesmo e-mail, o Google fica ligado a essa conta (não duplica). O e-mail tem de estar verificado no Google.
+
+1. [Google Cloud Console](https://console.cloud.google.com/) → criar/escolher projeto.
+2. *APIs e serviços → Ecrã de consentimento OAuth*: tipo **Externo**, nome da app, e-mail de suporte,
+   domínio autorizado (`vercel.app` ou o domínio próprio). Publicar a app (sair do modo “teste”).
+3. *Credenciais → Criar credenciais → ID do cliente OAuth → Aplicação Web*. URIs de redirecionamento autorizados:
+   - `https://caetano-importz.vercel.app/api/auth/google/callback`
+   - `http://localhost:3000/api/auth/google/callback` (desenvolvimento)
+   - (mais tarde) `https://<domínio-próprio>/api/auth/google/callback`
+4. Copiar o **ID do cliente** e o **segredo** para `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` (Vercel e `.env`).
+5. Redeploy. O botão só aparece quando as duas variáveis existem.
+
 ## 5. Imagens
 
 - Produção: **Vercel Blob**. O admin reduz as fotos no browser (máx. 2000 px, WebP) antes de enviar;

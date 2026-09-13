@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { GoogleButton } from "@/components/auth/google-button";
 import { getCurrentUser } from "@/lib/auth";
 import { RegisterForm } from "../auth-forms";
 
@@ -15,6 +16,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       <h1 className="display mt-2 text-6xl">Criar conta</h1>
       <p className="mt-3 text-muted">Segue as tuas encomendas, guarda moradas e favoritos.</p>
       <div className="mt-8">
+        <GoogleButton next={next} label="Criar conta com Google" />
         <RegisterForm next={next} email={email} />
       </div>
     </div>

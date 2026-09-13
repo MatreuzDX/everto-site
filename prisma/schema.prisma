@@ -25,7 +25,10 @@ enum Role {
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
-  passwordHash String
+  /// Null em contas criadas só com Google.
+  passwordHash String?
+  /// `sub` do Google — liga a conta ao "Entrar com Google".
+  googleId     String?   @unique
   name         String
   phone        String?
   role         Role      @default(CUSTOMER)

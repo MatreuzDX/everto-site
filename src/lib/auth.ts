@@ -108,7 +108,8 @@ export async function loginUser(emailInput: string, password: string) {
     throw new AuthError(`Demasiadas tentativas. Tente daqui a ${minutes} min.`);
   }
 
-  if (!(await verifyPassword(user.passwordHash, password))) {
+  // Conta criada só com Google não tem palavra-passe: mesmo erro genérico.
+  if (!user.passwordHash || !(await verifyPassword(user.passwordHash, password))) {
     const failed = user.failedLogins + 1;
     await prisma.user.update({
       where: { id: user.id },
@@ -125,6 +126,37 @@ export async function loginUser(emailInput: string, password: string) {
     where: { id: user.id },
     data: { failedLogins: 0, lockedUntil: null, lastLoginAt: new Date() },
   });
+  await startSession(user.id);
+  return user;
+}
+
+/**
+ * Entrar com Google (perfil já verificado pelo Google, `email_verified`).
+ *   1. Conta com este googleId → entra.
+ *   2. Conta com o mesmo e-mail (criada por palavra-passe) → liga o Google a
+ *      essa conta, em vez de duplicar.
+ *   3. Nenhuma → cria conta de cliente sem palavra-passe.
+ */
+export async function loginWithGoogle(profile: { googleId: string; email: string; name: string }) {
+  const email = profile.email.trim().toLowerCase();
+
+  let user =
+    (await prisma.user.findUnique({ where: { googleId: profile.googleId } })) ??
+    (await prisma.user.findUnique({ where: { email } }));
+
+  if (user && !user.isActive) throw new AuthError("Conta desativada.");
+
+  if (user) {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { googleId: profile.googleId, lastLoginAt: new Date(), failedLogins: 0, lockedUntil: null },
+    });
+  } else {
+    user = await prisma.user.create({
+      data: { email, name: profile.name.trim().slice(0, 120) || "Cliente", googleId: profile.googleId, lastLoginAt: new Date() },
+    });
+  }
+
   await startSession(user.id);
   return user;
 }
