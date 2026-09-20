@@ -44,7 +44,7 @@ export function ProductCard({ product, priority = false }: { product: ProductCar
               <span className="tag bg-ink px-2 py-1 text-paper">Esgotado</span>
             ) : (
               <>
-                {product.isNew && <span className="tag bg-lime px-2 py-1 text-ink">Novo</span>}
+                {product.isNew && <span className="tag bg-brand px-2 py-1 text-ink">Novo</span>}
                 {product.isLimited && <span className="tag bg-ink px-2 py-1 text-paper">Limitado</span>}
                 {onSale && (
                   <span className="tag bg-danger px-2 py-1 text-white">

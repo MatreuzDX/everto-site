@@ -50,7 +50,7 @@ export default async function OrderPage({ params, searchParams }: Props) {
 
       {order.status === "PENDING_PAYMENT" && (
         <div className="mt-8 bg-ink p-6 text-paper md:p-8">
-          <p className="display text-3xl text-lime md:text-4xl">Último passo: pagamento</p>
+          <p className="display text-3xl text-brand md:text-4xl">Último passo: pagamento</p>
           {order.paymentMethod === "WHATSAPP" ? (
             <>
               <p className="mt-3 max-w-xl text-paper/80">

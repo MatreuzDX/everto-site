@@ -47,20 +47,20 @@ export default async function HomePage() {
         )}
         <div className="mx-auto flex min-h-[calc(100svh-6.5rem)] max-w-7xl flex-col justify-end px-4 pb-10 pt-16 md:min-h-[44rem] md:px-6 md:pb-16">
           <div className="tag mb-6 flex w-fit items-center gap-3 border border-dashed border-paper/40 px-3 py-2 text-paper/80">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-lime" aria-hidden />
+            <span className="h-2 w-2 animate-pulse rounded-full bg-brand" aria-hidden />
             {settings.tagline || "Futebol · Streetwear · Sneakers"}
           </div>
           <h1 className="display text-[21vw] leading-[0.82] sm:text-[17vw] lg:text-[11.5rem]">
             Caetano
             <br />
-            <span className="text-lime">Importz</span>
+            <span className="text-brand">Importz</span>
           </h1>
           <p className="mt-6 max-w-md text-lg font-medium text-paper/85 md:text-xl">
             {settings.heroTitle || "Estilo importado. Identidade única."}
           </p>
           {settings.heroSubtitle && <p className="mt-2 max-w-md text-paper/60">{settings.heroSubtitle}</p>}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/produtos" className="btn btn-lime h-14 sm:px-10">
+            <Link href="/produtos" className="btn btn-brand h-14 sm:px-10">
               Comprar agora <ArrowRight className="h-4 w-4" />
             </Link>
             <Link href="/produtos?novidade=1" className="btn btn-outline h-14 border-paper/60 hover:bg-paper hover:text-ink sm:px-10">
@@ -79,7 +79,7 @@ export default async function HomePage() {
               key={t.key}
               href={t.href}
               className={`group relative flex aspect-square flex-col justify-between overflow-hidden p-4 md:p-5 ${
-                i === 0 ? "col-span-2 aspect-[2/1] bg-lime text-ink md:row-span-2 md:aspect-auto" : "bg-ink text-paper"
+                i === 0 ? "col-span-2 aspect-[2/1] bg-brand text-ink md:row-span-2 md:aspect-auto" : "bg-ink text-paper"
               }`}
             >
               {t.image && (
@@ -168,7 +168,7 @@ export default async function HomePage() {
             href={settings.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative block overflow-hidden bg-lime p-6 text-ink md:p-12"
+            className="group relative block overflow-hidden bg-brand p-6 text-ink md:p-12"
           >
             <p className="tag">Siga</p>
             <p className="display mt-2 break-all text-[12vw] leading-[0.85] md:text-[7.5rem]">@{handle ?? "instagram"}</p>

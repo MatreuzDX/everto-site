@@ -101,7 +101,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                       <span className={`tag px-2 py-0.5 ${stock === 0 ? "bg-danger text-white" : stock <= p.lowStockThreshold ? "bg-amber-100" : "bg-paper-2"}`}>{stock}</span>
                     </td>
                     <td>
-                      <span className={`tag px-2 py-0.5 ${p.status === "ACTIVE" ? "bg-lime" : "bg-paper-2"}`}>{STATUS_LABEL[p.status]}</span>
+                      <span className={`tag px-2 py-0.5 ${p.status === "ACTIVE" ? "bg-brand" : "bg-paper-2"}`}>{STATUS_LABEL[p.status]}</span>
                     </td>
                   </tr>
                 );

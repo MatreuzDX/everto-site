@@ -23,7 +23,7 @@ export default async function AddressesPage() {
               <li key={a.id} className="border border-ink/10 bg-white p-4 text-sm">
                 <div className="flex items-center gap-2">
                   <p className="font-semibold">{a.label || a.name}</p>
-                  {a.isDefault && <span className="tag bg-lime px-2 py-0.5">Principal</span>}
+                  {a.isDefault && <span className="tag bg-brand px-2 py-0.5">Principal</span>}
                 </div>
                 <p className="mt-1 leading-relaxed text-ink/80">
                   {a.name}

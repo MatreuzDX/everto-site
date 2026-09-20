@@ -158,7 +158,7 @@ export function ProductForm({
                 <li key={img.url} className="border border-ink/10">
                   <div className="relative aspect-[4/5] bg-paper-2">
                     <Image src={img.url} alt="" fill sizes="200px" className="object-cover" />
-                    {i === 0 && <span className="tag absolute left-1 top-1 bg-lime px-1.5 py-0.5">Principal</span>}
+                    {i === 0 && <span className="tag absolute left-1 top-1 bg-brand px-1.5 py-0.5">Principal</span>}
                   </div>
                   <input
                     value={img.alt ?? ""}

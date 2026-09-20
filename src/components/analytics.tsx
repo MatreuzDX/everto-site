@@ -49,7 +49,7 @@ export function Analytics() {
             </Link>
           </p>
           <div className="mt-3 flex gap-2">
-            <button type="button" onClick={() => choose("granted")} className="btn btn-lime min-h-10 flex-1">
+            <button type="button" onClick={() => choose("granted")} className="btn btn-brand min-h-10 flex-1">
               Aceitar
             </button>
             <button type="button" onClick={() => choose("denied")} className="btn btn-outline min-h-10 flex-1">

@@ -46,7 +46,7 @@ export function HeaderActions() {
           {ready && cartCount > 0 && (
             <span
               key={cartCount}
-              className="animate-fade-up absolute right-0.5 top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-lime px-1 text-[0.68rem] font-bold text-ink ring-2 ring-paper"
+              className="animate-fade-up absolute right-0.5 top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1 text-[0.68rem] font-bold text-ink ring-2 ring-paper"
             >
               {cartCount}
             </span>

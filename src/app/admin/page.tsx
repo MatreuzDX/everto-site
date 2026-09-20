@@ -87,7 +87,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
             {perDay.map(({ d, cents }) => (
               <div key={d.toISOString()} className="group flex h-full flex-1 flex-col justify-end">
                 <div
-                  className="relative bg-ink transition group-hover:bg-lime-dark"
+                  className="relative bg-ink transition group-hover:bg-brand-dark"
                   style={{ height: `${Math.max(cents > 0 ? 4 : 1, (cents / maxDay) * 100)}%` }}
                   title={`${d.toLocaleDateString("pt-PT")}: ${formatPrice(cents)}`}
                 />

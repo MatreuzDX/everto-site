@@ -19,12 +19,12 @@ export async function Footer() {
     <footer className="mt-24 bg-ink text-paper">
       <div className="mx-auto max-w-7xl px-4 pb-10 pt-16 md:px-6">
         <p className="display text-[18vw] leading-[0.8] text-paper/95 md:text-[9rem]">
-          Caetano<span className="text-lime">.</span>
+          Caetano<span className="text-brand">.</span>
         </p>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="tag mb-4 text-lime">Loja</p>
+            <p className="tag mb-4 text-brand">Loja</p>
             <ul className="grid gap-2 text-sm text-paper/80">
               <li><Link href="/produtos">Todos os produtos</Link></li>
               <li><Link href="/produtos?novidade=1">Novidades</Link></li>
@@ -37,7 +37,7 @@ export async function Footer() {
           </div>
 
           <div>
-            <p className="tag mb-4 text-lime">Ajuda</p>
+            <p className="tag mb-4 text-brand">Ajuda</p>
             <ul className="grid gap-2 text-sm text-paper/80">
               <li><Link href="/contacto">Contacto</Link></li>
               <li><Link href="/account">A minha conta</Link></li>
@@ -50,7 +50,7 @@ export async function Footer() {
           </div>
 
           <div>
-            <p className="tag mb-4 text-lime">Segue</p>
+            <p className="tag mb-4 text-brand">Segue</p>
             <ul className="grid gap-2 text-sm text-paper/80">
               {socials.map((s) => (
                 <li key={s.label}>

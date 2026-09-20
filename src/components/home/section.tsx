@@ -17,7 +17,7 @@ export function SectionHeader({
   return (
     <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
       <div>
-        {eyebrow && <p className={`tag mb-2 ${dark ? "text-lime" : "text-muted"}`}>{eyebrow}</p>}
+        {eyebrow && <p className={`tag mb-2 ${dark ? "text-brand" : "text-muted"}`}>{eyebrow}</p>}
         <h2 className="display text-[2.6rem] md:text-6xl">{title}</h2>
       </div>
       {href && (

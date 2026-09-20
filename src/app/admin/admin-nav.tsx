@@ -29,7 +29,7 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
           <Link
             key={href}
             href={href}
-            className={`flex shrink-0 items-center gap-3 px-3 py-2.5 text-sm font-medium ${active ? "bg-lime text-ink" : "text-paper/75 hover:bg-paper/10 hover:text-paper"}`}
+            className={`flex shrink-0 items-center gap-3 px-3 py-2.5 text-sm font-medium ${active ? "bg-brand text-ink" : "text-paper/75 hover:bg-paper/10 hover:text-paper"}`}
           >
             <Icon className="h-4 w-4" aria-hidden />
             {label}

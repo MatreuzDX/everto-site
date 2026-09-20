@@ -234,7 +234,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             className="animate-fade-up flex items-center gap-2 bg-ink px-4 py-3 text-sm font-medium text-paper shadow-xl"
           >
             {t.tone === "ok" ? (
-              <Check className="h-4 w-4 text-lime" aria-hidden />
+              <Check className="h-4 w-4 text-brand" aria-hidden />
             ) : (
               <X className="h-4 w-4 text-danger" aria-hidden />
             )}

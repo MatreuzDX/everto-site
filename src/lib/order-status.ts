@@ -6,7 +6,7 @@ export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string }> 
   PAID: { label: "Pago", tone: "bg-emerald-100 text-emerald-900" },
   PREPARING: { label: "Em preparação", tone: "bg-sky-100 text-sky-900" },
   SHIPPED: { label: "Enviado", tone: "bg-indigo-100 text-indigo-900" },
-  DELIVERED: { label: "Entregue", tone: "bg-lime-200 text-lime-950" },
+  DELIVERED: { label: "Entregue", tone: "bg-emerald-200 text-emerald-950" },
   CANCELLED: { label: "Cancelado", tone: "bg-red-100 text-red-900" },
   REFUNDED: { label: "Reembolsado", tone: "bg-fuchsia-100 text-fuchsia-900" },
 };

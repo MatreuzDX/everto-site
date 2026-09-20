@@ -26,7 +26,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
           </Link>
         ))}
         {isStaff(user.role) && (
-          <Link href="/admin" className="shrink-0 bg-lime px-3 py-3 text-sm font-semibold uppercase tracking-wide">
+          <Link href="/admin" className="shrink-0 bg-brand px-3 py-3 text-sm font-semibold uppercase tracking-wide">
             Admin
           </Link>
         )}

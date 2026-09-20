@@ -128,7 +128,7 @@ export default async function ProductPage({ params }: Props) {
           <div className="md:col-span-5">
             <div className="md:sticky md:top-24">
               <div className="flex flex-wrap gap-1.5">
-                {product.isNew && <span className="tag bg-lime px-2 py-1">Novo</span>}
+                {product.isNew && <span className="tag bg-brand px-2 py-1">Novo</span>}
                 {product.isLimited && <span className="tag bg-ink px-2 py-1 text-paper">Edição limitada</span>}
                 {product.isBestSeller && <span className="tag border border-ink px-2 py-1">Mais vendido</span>}
               </div>

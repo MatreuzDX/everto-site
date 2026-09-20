@@ -12,8 +12,8 @@
   --color-ink-2: #161618;
   --color-paper: #f3f1eb;
   --color-paper-2: #e8e5dc;
-  --color-lime: #c6ff3d;
-  --color-lime-dark: #9fd11f;
+  --color-brand: #ff6a1f;
+  --color-brand-dark: #d94f0d;
   --color-muted: #6f6d68;
   --color-line: #d9d5ca;
   --color-danger: #e5484d;
@@ -52,7 +52,7 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: var(--color-lime);
+    background: var(--color-brand);
     color: var(--color-ink);
   }
   :focus-visible {
@@ -95,8 +95,8 @@
   .btn:disabled { opacity: 0.45; pointer-events: none; }
   .btn-primary { background: var(--color-ink); color: var(--color-paper); }
   .btn-primary:hover { background: var(--color-ink-2); }
-  .btn-lime { background: var(--color-lime); color: var(--color-ink); }
-  .btn-lime:hover { background: var(--color-lime-dark); }
+  .btn-brand { background: var(--color-brand); color: var(--color-ink); }
+  .btn-brand:hover { background: var(--color-brand-dark); }
   .btn-outline { border: 1.5px solid currentColor; }
   .btn-outline:hover { background: var(--color-ink); color: var(--color-paper); }
   .btn-whatsapp { background: #1fa855; color: #fff; }

@@ -15,7 +15,7 @@ export async function Header() {
 
   return (
     <>
-      <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[90] focus:bg-lime focus:p-2">
+      <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[90] focus:bg-brand focus:p-2">
         Saltar para o conteúdo
       </a>
 
@@ -27,7 +27,7 @@ export async function Header() {
                 ticker.map((t, j) => (
                   <span key={`${copy}-${i}-${j}`} className="tag flex items-center px-5 text-[0.7rem]">
                     {t}
-                    <span className="ml-10 text-lime">✦</span>
+                    <span className="ml-10 text-brand">✦</span>
                   </span>
                 )),
               )}

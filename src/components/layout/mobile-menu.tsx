@@ -41,14 +41,14 @@ export function MobileMenu({ tree, instagramUrl }: { tree: CategoryNode[]; insta
             className="animate-fade-up absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-ink text-paper"
           >
             <div className="flex h-16 items-center justify-between border-b border-paper/10 px-4">
-              <span className="tag text-lime">Menu</span>
+              <span className="tag text-brand">Menu</span>
               <button type="button" onClick={() => setOpen(false)} className="grid h-11 w-11 place-items-center" aria-label="Fechar menu">
                 <X className="h-6 w-6" />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 py-4">
-              <Link href="/produtos?novidade=1" className="display block py-3 text-4xl text-lime">
+              <Link href="/produtos?novidade=1" className="display block py-3 text-4xl text-brand">
                 Novidades
               </Link>
               <Link href="/produtos" className="display block py-3 text-4xl">
@@ -92,7 +92,7 @@ export function MobileMenu({ tree, instagramUrl }: { tree: CategoryNode[]; insta
             </div>
 
             {instagramUrl && (
-              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="btn btn-lime m-4">
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="btn btn-brand m-4">
                 Seguir no Instagram
               </a>
             )}

@@ -80,7 +80,7 @@ export default async function CategoriesPage({ searchParams }: Props) {
                       <span className={`font-medium ${c.parentId ? "" : "font-bold uppercase"}`}>{c.name}</span>
                       <span className="tag text-muted">/{c.slug}</span>
                       {!c.isActive && <span className="tag bg-paper-2 px-1.5">Inativa</span>}
-                      {c.showOnHome && <span className="tag bg-lime px-1.5">Home</span>}
+                      {c.showOnHome && <span className="tag bg-brand px-1.5">Home</span>}
                       <span className="ml-auto text-xs text-muted">{c._count.products} produtos</span>
                       <span className="text-muted transition group-open:rotate-45">+</span>
                     </summary>
