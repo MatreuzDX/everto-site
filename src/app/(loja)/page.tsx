@@ -78,8 +78,8 @@ export default async function HomePage() {
             <Link
               key={t.key}
               href={t.href}
-              className={`group relative flex aspect-square flex-col justify-between overflow-hidden p-4 md:p-5 ${
-                i === 0 ? "col-span-2 aspect-[2/1] bg-brand text-ink md:row-span-2 md:aspect-auto" : "bg-ink text-paper"
+              className={`group relative flex aspect-square flex-col justify-between overflow-hidden bg-ink p-4 text-paper md:p-5 ${
+                i === 0 ? "col-span-2 aspect-[2/1] md:row-span-2 md:aspect-auto" : ""
               }`}
             >
               {t.image && (
@@ -88,7 +88,7 @@ export default async function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
                 </>
               )}
-              <span className="tag relative">{String(i + 1).padStart(2, "0")}</span>
+              <span className={`tag relative ${i === 0 ? "text-brand" : ""}`}>{String(i + 1).padStart(2, "0")}</span>
               <span className="relative flex items-end justify-between gap-2">
                 <span className={`display ${i === 0 ? "text-6xl md:text-8xl" : "text-3xl md:text-5xl"}`}>{t.label}</span>
                 <ArrowUpRight className="h-6 w-6 shrink-0 transition group-hover:-translate-y-1 group-hover:translate-x-1" />
@@ -168,13 +168,13 @@ export default async function HomePage() {
             href={settings.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative block overflow-hidden bg-brand p-6 text-ink md:p-12"
+            className="group relative block overflow-hidden bg-ink p-6 text-paper md:p-12"
           >
-            <p className="tag">Siga</p>
+            <p className="tag text-brand">Siga</p>
             <p className="display mt-2 break-all text-[12vw] leading-[0.85] md:text-[7.5rem]">@{handle ?? "instagram"}</p>
-            <span className="mt-6 inline-flex items-center gap-2 border-b-2 border-ink pb-1 font-bold uppercase tracking-wide">
+            <span className="mt-6 inline-flex items-center gap-2 border-b-2 border-brand pb-1 font-bold uppercase tracking-wide">
               Drops em primeira mão no Instagram
-              <ArrowUpRight className="h-5 w-5 transition group-hover:-translate-y-1 group-hover:translate-x-1" />
+              <ArrowUpRight className="h-5 w-5 text-brand transition group-hover:-translate-y-1 group-hover:translate-x-1" />
             </span>
           </a>
         </section>
