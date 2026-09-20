@@ -24,11 +24,6 @@ export type DemoProductData = {
 
 export const DEMO_PRODUCTS: DemoProductData[] = [
   // ─── Futebol ───
-  { name: "Camisola Retro Listrada Vermelha", category: "retro", price: 44.9, sale: 34.9, images: [u("1616124619460-ff4ed8f4683c"), u("1649771543037-916e2702008a")], sizes: CLOTHES, stock: [4, 6, 2, 1, 0], flags: { isNew: true, isFeatured: true }, text: "Riscas clássicas, gola canelada e corte adepto. Um visual de bancada dos anos 90." },
-  { name: "Camisola Amarela e Verde Seleção", category: "camisolas-selecoes", price: 49.9, images: [u("1552066379-e7bfd22155c5")], sizes: CLOTHES, stock: [5, 8, 7, 3, 2], flags: { isBestSeller: true }, text: "Cores fortes para dias de jogo. Tecido leve e respirável." },
-  { name: "Camisola Preta e Amarela 90s", category: "retro", price: 39.9, images: [u("1689624291789-7b402a15915a"), u("1689624291744-034ee30c8799")], sizes: CLOTHES, stock: [1, 2, 1, 0, 0], flags: { isLimited: true }, text: "Edição limitada inspirada nos equipamentos alternativos dos anos 90." },
-  { name: "Camisola Listrada Azul e Grená", category: "camisolas-clubes", price: 44.9, images: [u("1662096909714-e2f206d0a636")], sizes: CLOTHES, stock: [3, 5, 5, 2, 1], flags: { isNew: true }, text: "Riscas verticais e acabamento premium." },
-  { name: "Camisola Vermelha Home", category: "camisolas-clubes", price: 54.9, images: [u("1577212017184-80cc0da11082"), u("1577212017308-55c4d60d2609")], sizes: CLOTHES, stock: [6, 9, 8, 4, 2], flags: { isBestSeller: true, isFeatured: true }, text: "A clássica vermelha para usar no estádio ou na rua." },
 
   // ─── Roupas ───
   { name: "T-shirt Oversized Branca Essential", category: "oversized", price: 24.9, images: [u("1581655353564-df123a1eb820"), u("1521572163474-6864f9cf17ab")], sizes: CLOTHES, stock: [10, 12, 9, 6, 3], flags: { isNew: true }, text: "Algodão pesado, corte oversized e ombro descaído. A base de qualquer fit." },
@@ -55,7 +50,6 @@ export const DEMO_PRODUCTS: DemoProductData[] = [
 ];
 
 export const DEMO_CATEGORY_IMAGES: Record<string, string> = {
-  futebol: u("1649771543037-916e2702008a"),
   roupas: u("1623596305214-19f21cbf48ee"),
   sneakers: u("1600185365926-3a2ce3cdb9eb"),
   calcado: u("1549298916-b41d501d3772"),

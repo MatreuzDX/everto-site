@@ -44,3 +44,6 @@ public/uploads/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Fotos recebidas por WhatsApp (material do cliente, nao vai para o repositorio)
+whatsapp-fotos/
